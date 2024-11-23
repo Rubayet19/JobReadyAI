@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/job-ready-ai-client/browser",
+            "outputPath": "dist/job-ready-ai-client",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -53,8 +53,7 @@
                   "maximumError": "8kb"
                 }
               ],
-              "outputHashing": "all",
-              "baseHref": "/"
+              "outputHashing": "all"
             },
             "development": {
               "optimization": false,

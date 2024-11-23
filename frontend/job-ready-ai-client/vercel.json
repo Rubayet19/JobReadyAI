@@ -1,21 +1,19 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "package.json",
-        "use": "@vercel/static-build",
-        "config": {
-          "buildCommand": "npm run vercel-build",
-          "outputDirectory": "dist/job-ready-ai-client/browser"
-        }
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "buildCommand": "npm run vercel-build",
+        "outputDirectory": "dist/job-ready-ai-client"
       }
-    ],
-    "rewrites": [
-      {
-        "source": "/(.*)",
-        "destination": "/index.html"
-      }
-    ],
-    "buildCommand": "npm run vercel-build",
-    "outputDirectory": "dist/job-ready-ai-client/browser"
-  }
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

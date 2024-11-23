@@ -10,30 +10,12 @@
         }
       }
     ],
-    "routes": [
-      { "handle": "filesystem" },
-      {
-        "src": "/assets/(.*)",
-        "dest": "/assets/$1"
-      },
-      {
-        "src": "/(.*)",
-        "dest": "/index.html"
-      }
-    ],
-    "headers": [
+    "rewrites": [
       {
         "source": "/(.*)",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "no-cache, no-store, must-revalidate"
-          },
-          {
-            "key": "X-Content-Type-Options",
-            "value": "nosniff"
-          }
-        ]
+        "destination": "/index.html"
       }
-    ]
+    ],
+    "buildCommand": "npm run vercel-build",
+    "outputDirectory": "dist/job-ready-ai-client/browser"
   }

@@ -1,0 +1,6 @@
+@JobReadyAI.API_HostAddress = http://localhost:5001
+
+GET {{JobReadyAI.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,13 @@
+<div class="chat-container" #scrollContainer>
+    <div class="messages-container">
+      <app-message
+        *ngFor="let message of messages$ | async"
+        [message]="message">
+      </app-message>
+    </div>
+    <app-message-input
+      [disabled]="isLoading"
+      (messageSent)="onMessageSent($event)">
+    </app-message-input>
+  </div>
+  

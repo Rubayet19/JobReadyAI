@@ -1,0 +1,12 @@
+<div class="message-input-container">
+    <input 
+        type="text" 
+        [formControl]="messageControl"
+        placeholder="Type your message..."
+        (keyup.enter)="sendMessage()">
+    <button 
+        (click)="sendMessage()"
+        [disabled]="!messageControl.valid">
+        Send
+    </button>
+</div>

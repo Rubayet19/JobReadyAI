@@ -1,0 +1,11 @@
+<div class="message" [ngClass]="{'user-message': message.isUser, 'ai-message': !message.isUser}">
+    <div class="message-content">
+        {{ message.content }}
+    </div>
+    <div class="message-timestamp">
+        {{ message.timestamp | date:'short' }}
+    </div>
+    <div *ngIf="message.status" class="message-status">
+        {{ message.status }}
+    </div>
+</div>

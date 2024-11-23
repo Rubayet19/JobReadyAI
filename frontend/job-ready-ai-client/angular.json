@@ -25,6 +25,7 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "baseHref": "/job-ready-ai-client/",
             "assets": [
               {
                 "glob": "**/*",

@@ -6,14 +6,14 @@
       "use": "@vercel/static-build",
       "config": {
         "buildCommand": "npm run vercel-build",
-        "outputDirectory": "dist/job-ready-ai-client"
+        "outputDirectory": "dist"
       }
     }
   ],
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/job-ready-ai-client/index.html"
     }
   ]
 }

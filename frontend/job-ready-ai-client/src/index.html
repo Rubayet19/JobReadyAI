@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -6,7 +6,10 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <script src="env.js"></script>
+  <script>
+    window._env = window._env || {};
+    window._env.BACKEND_URL = window._env.BACKEND_URL || 'http://localhost:5001';
+  </script>
 </head>
 <body>
   <app-root></app-root>

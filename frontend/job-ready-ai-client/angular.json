@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/job-ready-ai-client",
+            "outputPath": "dist/job-ready-ai-client/browser",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -30,6 +30,8 @@
                 "glob": "**/*",
                 "input": "public"
               },
+              "src/favicon.ico",
+              "src/assets",
               "src/env.js"
             ],
             "styles": [
@@ -42,16 +44,17 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "500kb",
+                  "maximumError": "2mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "4kb",
+                  "maximumError": "8kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "baseHref": "/"
             },
             "development": {
               "optimization": false,
@@ -90,6 +93,8 @@
                 "glob": "**/*",
                 "input": "public"
               },
+              "src/favicon.ico",
+              "src/assets",
               "src/env.js"
             ],
             "styles": [

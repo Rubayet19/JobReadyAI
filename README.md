@@ -90,7 +90,8 @@ An AI-powered interview preparation tool that generates tailored interview quest
 
 ## 🖼️ Screenshots
 
-![image](https://github.com/user-attachments/assets/8acdd970-1134-45c0-a38a-da0a8f425f5a)
+![image](https://github.com/user-attachments/assets/90d42d05-0295-444a-8559-06e5dd928b4a)
+
 
 
 ## 🤝 Contributing

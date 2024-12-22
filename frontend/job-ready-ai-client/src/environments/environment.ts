@@ -1,4 +1,4 @@
 export const environment = {
-  production: false,
-  apiUrl: 'http://localhost:5001'
+  production: true,
+  apiUrl: 'https://jobready-ai-api.azurewebsites.net'
 };

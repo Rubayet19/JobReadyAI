@@ -2,14 +2,16 @@
   "version": 2,
   "builds": [
     {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist/job-ready-ai-client"
-      }
+      "src": "dist/job-ready-ai-client/*",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
+    { "handle": "filesystem" },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
     {
       "src": "/(.*)",
       "dest": "/index.html"

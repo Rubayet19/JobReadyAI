@@ -8,10 +8,15 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", builder =>
     {
-        builder.WithOrigins("http://localhost:4200")
-               .AllowAnyMethod()
-               .AllowAnyHeader()
-               .AllowCredentials(); // Add this if you're using cookies/authentication
+        builder.WithOrigins(
+                "http://localhost:4200",
+                "https://job-ready-ai.vercel.app",
+                "https://job-ready-ai-git-master-rubayet19.vercel.app",
+                "https://job-ready-ai-rubayet19.vercel.app"
+            )
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
     });
 });
 

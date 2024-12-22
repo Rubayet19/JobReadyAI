@@ -8,9 +8,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", builder =>
     {
-        builder.SetIsOriginAllowed(origin => true) // Be careful with this in production
+        builder.SetIsOriginAllowed(origin => true)
                .AllowAnyMethod()
                .AllowAnyHeader()
+               .SetIsOriginAllowed((host) => true)
                .AllowCredentials();
     });
 });
@@ -33,7 +34,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Add CORS before routing and after any authentication/authorization middleware
+// Add CORS before routing
 app.UseCors("AllowAngular");
 
 app.UseHttpsRedirection();

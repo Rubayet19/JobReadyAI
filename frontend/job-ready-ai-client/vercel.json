@@ -11,8 +11,8 @@
       "headers": [
         { "key": "Access-Control-Allow-Origin", "value": "*" },
         { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PUT, DELETE, OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "X-Requested-With, Content-Type, Accept" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self' https://jobready-ai-api.azurewebsites.net; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://cdn.honey.io; style-src 'self' 'unsafe-inline' https://cdn.honey.io; img-src 'self' data: blob: https://cdn.honey.io; connect-src 'self' https://jobready-ai-api.azurewebsites.net https://vercel.live ws://localhost:* wss://*.vercel.live; font-src 'self' data:;" },
+        { "key": "Access-Control-Allow-Headers", "value": "X-Requested-With, Content-Type, Accept, Authorization" },
+        { "key": "Content-Security-Policy", "value": "default-src * 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';" },
         { "key": "X-Content-Type-Options", "value": "nosniff" }
       ]
     }

@@ -1,9 +1,19 @@
 {
   "version": 2,
   "rewrites": [
+    { "source": "/assets/(.*)", "destination": "/browser/assets/$1" },
+    { "source": "/(.*)\\.(.+)", "destination": "/browser/$1.$2" },
+    { "source": "/(.*)", "destination": "/browser/index.html" }
+  ],
+  "headers": [
     {
       "source": "/(.*)",
-      "destination": "/browser/index.html"
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" }
+      ]
     }
   ]
 }

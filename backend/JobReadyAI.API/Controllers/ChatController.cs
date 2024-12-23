@@ -22,6 +22,16 @@ namespace JobReadyAI.API.Controllers
             _openAIService = openAIService;
         }
 
+        [HttpGet("health")]
+        public IActionResult HealthCheck()
+        {
+            return Ok(new { 
+                status = "healthy",
+                timestamp = DateTime.UtcNow,
+                environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"
+            });
+        }
+
         public class ChatRequest
         {
             public string Message { get; set; }

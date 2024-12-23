@@ -2,6 +2,8 @@
 
 An AI-powered interview preparation tool that generates tailored interview questions based on job descriptions. Built with Angular and .NET Core, featuring OpenAI's GPT-4 for intelligent question generation.
 
+The site can be accessed here: https://job-ready-ai.vercel.app
+
 ## 🌟 Features
 
 - **Smart Question Generation**: Analyzes job descriptions to create relevant interview questions

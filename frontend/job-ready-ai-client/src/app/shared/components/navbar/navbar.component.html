@@ -1,0 +1,81 @@
+<nav class="bg-white shadow-md py-4 fixed w-full top-0 z-10">
+  <div class="container mx-auto px-4">
+    <div class="flex justify-between items-center">
+      <!-- Logo and Brand -->
+      <div class="flex items-center">
+        <a routerLink="/" class="flex items-center">
+          <span class="text-2xl font-bold text-indigo-700">JobReadyAI</span>
+        </a>
+      </div>
+
+      <!-- Desktop Menu -->
+      <div class="hidden md:flex items-center space-x-8">
+        <a 
+          routerLink="/" 
+          routerLinkActive="text-indigo-700 font-semibold" 
+          [routerLinkActiveOptions]="{exact: true}"
+          class="text-gray-700 hover:text-indigo-600 transition-colors duration-300">
+          Home
+        </a>
+        <a 
+          routerLink="/chat" 
+          routerLinkActive="text-indigo-700 font-semibold"
+          class="text-gray-700 hover:text-indigo-600 transition-colors duration-300">
+          Interview Prep
+        </a>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <div class="md:hidden">
+        <button 
+          type="button" 
+          class="text-gray-600 hover:text-indigo-600 focus:outline-none"
+          (click)="toggleMenu()">
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor" 
+            class="h-6 w-6">
+            <path 
+              *ngIf="!isMenuOpen" 
+              stroke-linecap="round" 
+              stroke-linejoin="round" 
+              stroke-width="2" 
+              d="M4 6h16M4 12h16M4 18h16" />
+            <path 
+              *ngIf="isMenuOpen" 
+              stroke-linecap="round" 
+              stroke-linejoin="round" 
+              stroke-width="2" 
+              d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div 
+      class="md:hidden" 
+      [ngClass]="{'block': isMenuOpen, 'hidden': !isMenuOpen}">
+      <div class="flex flex-col mt-4 space-y-4 pb-2">
+        <a 
+          routerLink="/" 
+          routerLinkActive="text-indigo-700 font-semibold" 
+          [routerLinkActiveOptions]="{exact: true}"
+          class="text-gray-700 hover:text-indigo-600 transition-colors duration-300"
+          (click)="toggleMenu()">
+          Home
+        </a>
+        <a 
+          routerLink="/chat" 
+          routerLinkActive="text-indigo-700 font-semibold"
+          class="text-gray-700 hover:text-indigo-600 transition-colors duration-300"
+          (click)="toggleMenu()">
+          Interview Prep
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="h-16"></div> <!-- Spacer to account for fixed navbar -->

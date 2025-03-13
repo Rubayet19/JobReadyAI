@@ -1,17 +1,17 @@
 // src/app/app.component.ts
 import { Component } from '@angular/core';
-import { ChatComponent } from './features/chat/chat.component';
+import { RouterOutlet } from '@angular/router';
+import { NavbarComponent } from './shared/components/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [ChatComponent],
+  imports: [RouterOutlet, NavbarComponent],
   template: `
     <div class="app-container">
-
-      
-      <main class="container mx-auto p-4">
-        <app-chat></app-chat>
+      <app-navbar></app-navbar>
+      <main class="container mx-auto">
+        <router-outlet></router-outlet>
       </main>
     </div>
   `,
@@ -24,7 +24,7 @@ import { ChatComponent } from './features/chat/chat.component';
 
     main {
       flex: 1;
-      max-width: 800px;
+      width: 100%;
       margin: 0 auto;
     }
   `]

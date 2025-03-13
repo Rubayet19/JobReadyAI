@@ -1,0 +1,7 @@
+{
+  "/api": {
+    "target": "https://jobready-ai-api-fseghehtgee2aafr.westus2-01.azurewebsites.net",
+    "secure": true,
+    "changeOrigin": true
+  }
+} 

@@ -1,0 +1,130 @@
+.chat-page {
+  background-color: #f9fafb;
+  min-height: calc(100vh - 64px); /* Account for navbar height */
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 128px); /* Account for navbar and some padding */
+  max-height: 800px;
+}
+
+.messages-area {
+  flex-grow: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #d1d5db;
+    border-radius: 6px;
+  }
+}
+
+.message {
+  animation: fadeIn 0.3s ease-in-out;
+
+  &.user-message {
+    .message-content {
+      background-color: #eff6ff;
+      border-top-right-radius: 0;
+    }
+  }
+
+  &.ai-message {
+    .message-content {
+      background-color: #ffffff;
+      border-top-left-radius: 0;
+    }
+  }
+}
+
+.message-avatar {
+  font-size: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tooltip-text {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+  white-space: nowrap;
+  background-color: #1f2937;
+  color: white;
+  text-align: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+button:hover .tooltip-text {
+  opacity: 1;
+}
+
+/* Markdown styling for AI messages */
+.prose {
+  font-size: 0.875rem;
+  line-height: 1.5;
+
+  :host ::ng-deep {
+    p { 
+      margin-bottom: 1rem;
+    }
+    
+    ul, ol { 
+      margin: 1rem 0;
+      padding-left: 1.5rem;
+    }
+
+    li { 
+      margin-bottom: 0.5rem;
+    }
+
+    strong { 
+      font-weight: 600;
+      color: #2d3748;
+      display: block;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    em { 
+      display: block;
+      color: #4a5568;
+      font-style: normal;
+      margin-left: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-weight: 600;
+      color: #1a202c;
+      margin: 1.5rem 0 1rem 0;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

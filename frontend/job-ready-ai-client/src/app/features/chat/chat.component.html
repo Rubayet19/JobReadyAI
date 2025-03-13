@@ -1,13 +1,159 @@
-<div class="chat-container" #scrollContainer>
-    <div class="messages-container">
-      <app-message
-        *ngFor="let message of messages$ | async"
-        [message]="message">
-      </app-message>
+<div class="chat-page">
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="chat-container bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+      <!-- Chat Header -->
+      <div class="chat-header bg-indigo-600 p-4 text-white">
+        <h1 class="text-xl font-semibold text-center">JobReadyAI Interview Assistant</h1>
+        <p class="text-center text-indigo-100 text-sm mt-1">Prepare for your interviews with AI-generated questions</p>
+      </div>
+
+      <!-- Messages Container -->
+      <div class="messages-area h-[60vh] overflow-y-auto p-4" #scrollContainer>
+        <!-- Welcome Message when no messages -->
+        <div *ngIf="(messages$ | async)?.length === 0" class="flex items-center justify-center h-full">
+          <div class="text-center max-w-lg p-6 bg-indigo-50 rounded-xl">
+            <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+              </svg>
+            </div>
+            <h2 class="text-xl font-bold mb-3 text-indigo-800">Welcome to JobReadyAI</h2>
+            <p class="text-gray-600">
+              Enter a job description below to get tailored interview questions based on your target position.
+            </p>
+          </div>
+        </div>
+
+        <!-- Messages List -->
+        <div class="messages-list">
+          <ng-container *ngFor="let message of messages$ | async">
+            <!-- User Message -->
+            <div *ngIf="message.isUser" class="message user-message flex justify-end mb-4">
+              <div class="message-content bg-indigo-100 p-3 rounded-lg max-w-[80%]">
+                <div class="message-text whitespace-pre-wrap text-gray-800">
+                  {{ message.content }}
+                </div>
+              </div>
+            </div>
+
+            <!-- AI Message -->
+            <div *ngIf="!message.isUser" class="message ai-message flex mb-4">
+              <div class="message-avatar shrink-0 w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white mr-2">
+                <span class="text-xs">AI</span>
+              </div>
+              <div class="message-content bg-white p-3 rounded-lg border border-gray-200 shadow-sm max-w-[80%]">
+                <div class="message-text prose prose-sm max-w-none">
+                  <div [innerHTML]="parseMarkdown(message.content)"></div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Loading Indicator -->
+          <div *ngIf="isLoading" class="message ai-message flex mb-4">
+            <div class="message-avatar shrink-0 w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white mr-2">
+              <span class="text-xs">AI</span>
+            </div>
+            <div class="message-content bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+              <div class="flex gap-2">
+                <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></div>
+                <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="input-area border-t border-gray-200 p-4 bg-gray-50">
+        <form (ngSubmit)="sendMessage()" class="relative">
+          <textarea
+            [(ngModel)]="newMessage"
+            name="message"
+            rows="3"
+            [disabled]="isLoading"
+            (keydown)="handleEnterKey($event)"
+            class="w-full resize-none rounded-lg border border-gray-300 bg-white pr-24 pl-4 py-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-100"
+            placeholder="Paste your job description here or ask a question..."
+          ></textarea>
+          
+          <div class="absolute right-2 bottom-2 flex gap-2">
+            <!-- Clear Chat Button -->
+            <button
+              type="button"
+              (click)="clearChat()"
+              class="p-2 rounded-md text-gray-500 hover:bg-gray-100 group relative"
+              title="Clear chat"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z" clip-rule="evenodd" />
+              </svg>
+              <span class="tooltip-text">Clear chat</span>
+            </button>
+
+            <!-- Export Button -->
+            <div class="relative">
+              <button
+                type="button"
+                (click)="toggleExportMenu($event)"
+                class="p-2 rounded-md text-gray-500 hover:bg-gray-100 group relative"
+                title="Export chat"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                  <path fill-rule="evenodd" d="M12 2.25a.75.75 0 01.75.75v11.69l3.22-3.22a.75.75 0 111.06 1.06l-4.5 4.5a.75.75 0 01-1.06 0l-4.5-4.5a.75.75 0 111.06-1.06l3.22 3.22V3a.75.75 0 01.75-.75zm-9 13.5a.75.75 0 01.75.75v2.25a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5V16.5a.75.75 0 011.5 0v2.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V16.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
+                </svg>
+                <span class="tooltip-text">Export chat</span>
+              </button>
+
+              <!-- Export dropdown menu -->
+              <div *ngIf="showExportMenu" 
+                   class="absolute bottom-full right-0 mb-2 w-32 bg-white rounded-md shadow-lg z-50 border border-gray-200">
+                <div class="py-1">
+                  <button
+                    type="button"
+                    (click)="exportAsPDF()"
+                    class="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+                  >
+                    Export as PDF
+                  </button>
+                  <button
+                    type="button"
+                    (click)="exportAsText()"
+                    class="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+                  >
+                    Export as Text
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Send Button -->
+            <button
+              type="submit"
+              [disabled]="!newMessage.trim() || isLoading"
+              class="p-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:bg-indigo-300 group relative transition-colors duration-300"
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                viewBox="0 0 24 24" 
+                fill="currentColor" 
+                class="w-5 h-5"
+              >
+                <path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" />
+              </svg>
+              <span class="tooltip-text">Send</span>
+            </button>
+          </div>
+        </form>
+        <div class="text-center mt-2">
+          <p class="text-xs text-gray-500">
+            Press Enter to send, Shift + Enter for new line
+          </p>
+        </div>
+      </div>
     </div>
-    <app-message-input
-      [disabled]="isLoading"
-      (messageSent)="onMessageSent($event)">
-    </app-message-input>
   </div>
+</div>
   

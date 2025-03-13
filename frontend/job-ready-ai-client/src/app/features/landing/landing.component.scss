@@ -1,0 +1,110 @@
+.landing-container {
+  overflow-x: hidden;
+}
+
+.hero-section {
+  background: linear-gradient(to bottom, #f9f9ff, #ffffff);
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(to right, #6366f1, #8b5cf6);
+  }
+}
+
+.chat-illustration {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+}
+
+.message-container {
+  .ai-message, .user-message {
+    max-width: 80%;
+    animation: fadeIn 0.5s ease;
+  }
+
+  .user-message {
+    margin-left: auto;
+  }
+}
+
+.feature-card {
+  transition: all 0.3s ease;
+  border-top: 3px solid transparent;
+
+  &:hover {
+    border-top-color: #6366f1;
+    transform: translateY(-5px);
+  }
+
+  .feature-icon {
+    transition: transform 0.3s ease;
+  }
+
+  &:hover .feature-icon {
+    transform: scale(1.2);
+  }
+}
+
+.step-card {
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.get-started-btn, .learn-more-btn {
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.cta-section {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+footer {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Media queries for better responsive behavior */
+@media (max-width: 768px) {
+  .step-card {
+    margin-bottom: 1.5rem;
+  }
+}

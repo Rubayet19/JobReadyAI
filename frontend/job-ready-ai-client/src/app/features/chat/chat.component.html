@@ -1,14 +1,92 @@
 <div class="chat-page">
-  <div class="max-w-4xl mx-auto px-4 py-8">
-    <div class="chat-container bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <div class="chat-container bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 h-[90vh] flex flex-col">
       <!-- Chat Header -->
-      <div class="chat-header bg-indigo-600 p-4 text-white">
-        <h1 class="text-xl font-semibold text-center">JobReadyAI Interview Assistant</h1>
-        <p class="text-center text-indigo-100 text-sm mt-1">Prepare for your interviews with AI-generated questions</p>
+      <div class="chat-header bg-indigo-600 p-4 text-white flex justify-between items-center">
+        <!-- Conversation Title -->
+        <div class="conversations-menu-container relative">
+          <!-- Conversation Title -->
+          <div *ngIf="currentConversation$ | async as conversation" class="flex items-center">
+            <div *ngIf="!editingTitle" class="flex items-center cursor-pointer" (click)="startEditingTitle()">
+              <h1 class="text-xl font-semibold">{{ conversation.title }}</h1>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2 text-indigo-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </div>
+            <div *ngIf="editingTitle" class="flex items-center">
+              <input 
+                id="title-input"
+                type="text" 
+                [(ngModel)]="newTitle" 
+                class="border rounded px-2 py-1 text-lg text-gray-800" 
+                (keydown)="handleTitleKeyDown($event)"
+                (blur)="saveTitle()"
+              >
+            </div>
+          </div>
+
+          <!-- Conversations Menu Button -->
+          <button 
+            class="ml-2 p-2 rounded-full hover:bg-indigo-500 focus:outline-none" 
+            (click)="toggleConversationsMenu($event)"
+            aria-label="Conversations menu"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+          </button>
+
+          <!-- Conversations Dropdown Menu -->
+          <div *ngIf="showConversationsMenu" class="absolute left-0 top-12 w-64 bg-white shadow-lg rounded-md z-10 mt-2 py-2 text-gray-800">
+            <div class="max-h-96 overflow-y-auto">
+              <div *ngFor="let conversation of conversations$ | async" class="px-2">
+                <div 
+                  class="flex justify-between items-center px-2 py-2 rounded cursor-pointer hover:bg-gray-100"
+                  [class.bg-indigo-50]="(currentConversation$ | async)?.id === conversation.id"
+                  (click)="loadConversation(conversation.id)"
+                >
+                  <div class="flex-1 truncate">
+                    <div class="font-medium">{{ conversation.title }}</div>
+                    <div class="text-xs text-gray-500">{{ formatDate(conversation.updatedAt) }}</div>
+                  </div>
+                  <button 
+                    class="p-1 rounded-full hover:bg-gray-200 focus:outline-none"
+                    (click)="deleteConversation($event, conversation.id)"
+                    aria-label="Delete conversation"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center flex-1">
+          <h1 class="text-xl font-semibold">JobReadyAI Interview Assistant</h1>
+          <p class="text-indigo-100 text-sm mt-1">Prepare for your interviews with AI-generated questions</p>
+        </div>
+
+        <!-- New Chat Button - Only show when there's content in the current conversation or text in the input -->
+        <ng-container *ngIf="(currentConversation$ | async) as conversation">
+          <button
+            *ngIf="conversation.messages.length > 0 || newMessage.trim()"
+            type="button"
+            (click)="createNewConversation()"
+            class="p-2 rounded-full hover:bg-indigo-500 focus:outline-none"
+            title="New chat"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+        </ng-container>
       </div>
 
       <!-- Messages Container -->
-      <div class="messages-area h-[60vh] overflow-y-auto p-4" #scrollContainer>
+      <div class="messages-area flex-1 overflow-y-auto p-4" #scrollContainer>
         <!-- Welcome Message when no messages -->
         <div *ngIf="(messages$ | async)?.length === 0" class="flex items-center justify-center h-full">
           <div class="text-center max-w-lg p-6 bg-indigo-50 rounded-xl">
@@ -34,6 +112,9 @@
                 <div class="message-text whitespace-pre-wrap text-gray-800">
                   {{ message.content }}
                 </div>
+                <div class="text-xs mt-1 text-gray-500 text-right">
+                  {{ formatDate(message.timestamp) }}
+                </div>
               </div>
             </div>
 
@@ -45,6 +126,9 @@
               <div class="message-content bg-white p-3 rounded-lg border border-gray-200 shadow-sm max-w-[80%]">
                 <div class="message-text prose prose-sm max-w-none">
                   <div [innerHTML]="parseMarkdown(message.content)"></div>
+                </div>
+                <div class="text-xs mt-1 text-gray-500 text-right">
+                  {{ formatDate(message.timestamp) }}
                 </div>
               </div>
             </div>
@@ -93,41 +177,31 @@
               <span class="tooltip-text">Clear chat</span>
             </button>
 
-            <!-- Export Button -->
-            <div class="relative">
-              <button
-                type="button"
-                (click)="toggleExportMenu($event)"
-                class="p-2 rounded-md text-gray-500 hover:bg-gray-100 group relative"
-                title="Export chat"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-                  <path fill-rule="evenodd" d="M12 2.25a.75.75 0 01.75.75v11.69l3.22-3.22a.75.75 0 111.06 1.06l-4.5 4.5a.75.75 0 01-1.06 0l-4.5-4.5a.75.75 0 111.06-1.06l3.22 3.22V3a.75.75 0 01.75-.75zm-9 13.5a.75.75 0 01.75.75v2.25a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5V16.5a.75.75 0 011.5 0v2.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V16.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
-                </svg>
-                <span class="tooltip-text">Export chat</span>
-              </button>
+            <!-- Export as PDF Button -->
+            <button
+              type="button"
+              (click)="exportAsPDF()"
+              class="p-2 rounded-md text-gray-500 hover:bg-gray-100 group relative"
+              title="Export as PDF"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span class="tooltip-text">Export as PDF</span>
+            </button>
 
-              <!-- Export dropdown menu -->
-              <div *ngIf="showExportMenu" 
-                   class="absolute bottom-full right-0 mb-2 w-32 bg-white rounded-md shadow-lg z-50 border border-gray-200">
-                <div class="py-1">
-                  <button
-                    type="button"
-                    (click)="exportAsPDF()"
-                    class="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
-                  >
-                    Export as PDF
-                  </button>
-                  <button
-                    type="button"
-                    (click)="exportAsText()"
-                    class="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
-                  >
-                    Export as Text
-                  </button>
-                </div>
-              </div>
-            </div>
+            <!-- Export as Text Button -->
+            <button
+              type="button"
+              (click)="exportAsText()"
+              class="p-2 rounded-md text-gray-500 hover:bg-gray-100 group relative"
+              title="Export as Text"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              <span class="tooltip-text">Export as Text</span>
+            </button>
 
             <!-- Send Button -->
             <button

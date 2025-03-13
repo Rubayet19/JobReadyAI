@@ -2,10 +2,11 @@ import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit, ChangeDetec
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../core/services/chat.service';
-import { Observable, finalize } from 'rxjs';
+import { Observable, finalize, take } from 'rxjs';
 import { ChatMessage } from '../../core/models/chat.model';
 import { marked } from 'marked';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { Conversation } from '../../core/services/chat-storage.service';
 
 @Component({
   selector: 'app-chat',
@@ -17,9 +18,13 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 export class ChatComponent implements AfterViewChecked, OnInit {
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
   messages$: Observable<ChatMessage[]>;
+  conversations$: Observable<Conversation[]>;
+  currentConversation$: Observable<Conversation | null>;
   isLoading = false;
   newMessage = '';
-  showExportMenu = false;
+  showConversationsMenu = false;
+  editingTitle = false;
+  newTitle = '';
   private shouldScroll = true;
 
   constructor(
@@ -28,6 +33,8 @@ export class ChatComponent implements AfterViewChecked, OnInit {
     private cdr: ChangeDetectorRef
   ) {
     this.messages$ = this.chatService.messages$;
+    this.conversations$ = this.chatService.conversations$;
+    this.currentConversation$ = this.chatService.currentConversation$;
   }
 
   ngOnInit() {
@@ -36,10 +43,10 @@ export class ChatComponent implements AfterViewChecked, OnInit {
       gfm: true,
     });
 
-    // Close export menu when clicking outside
+    // Close menus when clicking outside
     document.addEventListener('click', (event) => {
-      if (this.showExportMenu && !(event.target as Element).closest('.relative')) {
-        this.showExportMenu = false;
+      if (this.showConversationsMenu && !(event.target as Element).closest('.conversations-menu-container')) {
+        this.showConversationsMenu = false;
       }
     });
   }
@@ -80,11 +87,11 @@ export class ChatComponent implements AfterViewChecked, OnInit {
     }
   }
 
-  toggleExportMenu(event?: MouseEvent): void {
+  toggleConversationsMenu(event?: MouseEvent): void {
     if (event) {
       event.stopPropagation();
     }
-    this.showExportMenu = !this.showExportMenu;
+    this.showConversationsMenu = !this.showConversationsMenu;
   }
 
   clearChat(): void {
@@ -95,7 +102,6 @@ export class ChatComponent implements AfterViewChecked, OnInit {
 
   exportAsPDF(): void {
     this.chatService.exportChatAsPDF();
-    this.showExportMenu = false;
   }
 
   exportAsText(): void {
@@ -107,7 +113,70 @@ export class ChatComponent implements AfterViewChecked, OnInit {
     a.download = 'chat-export.txt';
     a.click();
     window.URL.revokeObjectURL(url);
-    this.showExportMenu = false;
+  }
+
+  createNewConversation(): void {
+    // Check if there's an existing conversation with content
+    this.currentConversation$.pipe(take(1)).subscribe(currentConversation => {
+      if (currentConversation && currentConversation.messages.length > 0) {
+        this.chatService.createNewConversation();
+        this.showConversationsMenu = false;
+      } else if (this.newMessage.trim()) {
+        // If there's text in the input but no conversation yet, create one
+        this.chatService.createNewConversation();
+        this.showConversationsMenu = false;
+      }
+    });
+  }
+
+  loadConversation(conversationId: string): void {
+    this.chatService.loadConversation(conversationId);
+    this.showConversationsMenu = false;
+  }
+
+  deleteConversation(event: MouseEvent, conversationId: string): void {
+    event.stopPropagation();
+    if (confirm('Are you sure you want to delete this conversation? This action cannot be undone.')) {
+      this.chatService.deleteConversation(conversationId);
+    }
+  }
+
+  startEditingTitle(): void {
+    this.editingTitle = true;
+    // Get current title from the service
+    const currentConversation = this.chatService.currentConversation$.subscribe(
+      conversation => {
+        if (conversation) {
+          this.newTitle = conversation.title;
+          setTimeout(() => {
+            const titleInput = document.getElementById('title-input');
+            if (titleInput) {
+              titleInput.focus();
+            }
+          }, 0);
+        }
+      }
+    );
+  }
+
+  saveTitle(): void {
+    if (this.newTitle.trim()) {
+      this.chatService.updateConversationTitle(this.newTitle.trim());
+    }
+    this.editingTitle = false;
+  }
+
+  cancelEditingTitle(): void {
+    this.editingTitle = false;
+  }
+
+  handleTitleKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.saveTitle();
+    } else if (event.key === 'Escape') {
+      this.cancelEditingTitle();
+    }
   }
 
   sendMessage(): void {
@@ -137,5 +206,27 @@ export class ChatComponent implements AfterViewChecked, OnInit {
           console.error('Error sending message:', error);
         }
       });
+  }
+
+  formatDate(date: Date): string {
+    const now = new Date();
+    const messageDate = new Date(date);
+    
+    // Same day
+    if (messageDate.toDateString() === now.toDateString()) {
+      return messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    
+    // Within the last week
+    const oneWeekAgo = new Date(now);
+    oneWeekAgo.setDate(now.getDate() - 7);
+    if (messageDate > oneWeekAgo) {
+      const options: Intl.DateTimeFormatOptions = { weekday: 'short', hour: '2-digit', minute: '2-digit' };
+      return messageDate.toLocaleString([], options);
+    }
+    
+    // Older than a week
+    const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return messageDate.toLocaleString([], options);
   }
 }

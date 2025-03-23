@@ -90,10 +90,6 @@ The site can be accessed here: https://job-ready-ai.vercel.app
 4. Export your questions using the export button
 5. Clear chat history when needed
 
-## 🖼️ Screenshots
-
-![image](https://github.com/user-attachments/assets/90d42d05-0295-444a-8559-06e5dd928b4a)
-
 
 
 ## 🤝 Contributing
